@@ -4,7 +4,6 @@
 cursor_x db 0
 cursor_y db 0
 
-
 ;============================================
 ; MovCursor
 ; Move a cursor to a specific location on 
@@ -22,6 +21,7 @@ MovCursor:
     mov dh, bh
     mov [cursor_x], bl
     mov [cursor_y], bh
+    mov byte [cursor_synced], 0x1
     mov ah, 0x2
     mov bh, 0x0
     int 0x10
@@ -65,9 +65,35 @@ Print:
     lodsb
     test al, al
     jz .done
+
+    cmp al, 0xa
+    jz .handle_lf
+    cmp al, 0xd
+    jz .handle_cr
     mov bl, 0x7
     mov cx, 1
     call PutChar
     jmp .nxt_char
+
+.handle_lf:
+    inc byte [cursor_y]
+    mov bh, [cursor_y]
+    mov bl, [cursor_x]
+    call MovCursor
+    jmp .nxt_char
+
+.handle_cr:
+    mov byte[cursor_x], 0
+    mov bh, [cursor_y]
+    mov bl, [cursor_x]
+    call MovCursor
+    jmp .nxt_char
+
 .done:
+    ret
+
+GetCursor:
+    mov ah, 0x4
+    mov bh, 0
+    int 0x10
     ret

@@ -12,6 +12,10 @@ msg db "Welcome to NyanOS!", 0ah, 0dh, 0h
 boot:
 	cli ; no interrupts
 	cld ; all that we need to init
+   
+    mov bh, 14
+    mov bl, 24
+    call MovCursor
 
     mov si, msg
     call Print
