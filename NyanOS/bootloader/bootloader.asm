@@ -13,13 +13,6 @@ boot:
 	cli ; no interrupts
 	cld ; all that we need to init
 
-    mov bh, 14
-    mov bl, 24
-    call MovCursor
-
-    mov si, msg
-    call Print
-
     mov ax, 0x50
 
     ;; set the buffer at es:bx (0x50:0x0)
@@ -38,8 +31,6 @@ boot:
 
     
 	hlt ; halt the system
-
-%include "io.asm"
 
 ; We have to be 512 bytes. Clear the rest of the bytes with 0
 times 510 - ($-$$) db 0
