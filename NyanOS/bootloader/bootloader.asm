@@ -7,11 +7,19 @@ bits 16
 start: jmp boot
 
 ;; constant and variable definitions
-msg db "Welcome to NyanOS!", 0ah, 0dh, 0h
+welcome_msg db "Welcome to NyanOS!", 0ah, 0dh, 0h
+err_msg db "E", 0h
 
 boot:
 	cli ; no interrupts
 	cld ; all that we need to init
+    
+    mov bh, 0xe
+    mov bl, 0x18
+    call MovCursor
+    
+    mov si, welcome_msg
+    call Print
 
     mov ax, 0x50
 
@@ -27,10 +35,22 @@ boot:
 
     mov ah, 0x02    ;read sectors from disk 
     int 0x13    ; call the BIOS routine
-    jmp 0x50:0x0    ; jump and execute the sector!
+    
+    jc .disk_err    ; failed to read disk
 
+    jmp 0x50:0x0    ; jump and execute the sector!
+    
+.disk_err:
+    mov bh, 0xf
+    mov bl, 0x15
+    call MovCursor
+
+    mov si, err_msg
+    call Print
     
 	hlt ; halt the system
+
+%include "io.asm"
 
 ; We have to be 512 bytes. Clear the rest of the bytes with 0
 times 510 - ($-$$) db 0
