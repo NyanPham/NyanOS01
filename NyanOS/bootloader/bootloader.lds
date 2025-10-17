@@ -6,7 +6,7 @@ SECTIONS
     {
         *(.text)
     }
-    .data:
+    .data :
     {
         *(.data)
     }
