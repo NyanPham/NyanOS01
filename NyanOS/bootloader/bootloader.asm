@@ -37,7 +37,7 @@ boot:
     
     jc .disk_err    ; failed to read disk
 
-    jmp 0x50:0x0    ; jump and execute the sector!
+    jmp [0x500 + 0x18]   ; jump and execute the sector!
     
 .disk_err:
     mov bh, 0xf

@@ -1,13 +1,20 @@
-BUILD_DIR=../build/os
+BUILD_DIR=../build
+OS_DIR=$(BUILD_DIR)/os
+OS=$(OS_DIR)/os
 
-OS_SRCS := $(wildcard *.asm)
-OS_OBJS := $(patsubst %.asm, $(BUILD_DIR)/%.o, $(OS_SRCS))
+CFLAGS+=-ffreestanding -nostdlib -gdwarf-4 -m32 -ggdb3 -fno-pic
 
-all: $(OS_OBJS)
+OS_SRCS := $(wildcard *.c)
+OS_OBJS := $(patsubst %.c, $(OS_DIR)/%.o, $(OS_SRCS))
 
-$(BUILD_DIR)/%.o: %.asm
-	mkdir -p $(BUILD_DIR)
-	nasm -f bin $< -o $@
+all: $(OS)
+
+$(OS_DIR)/%.o: %.c
+	mkdir -p $(OS_DIR)
+	gcc $(CFLAGS) -c $< -o $@
+
+$(OS): $(OS_OBJS)
+	ld -m elf_i386 -nmagic -Tos.lds $(OS_OBJS) -o $@	
 
 clean:
-	rm $(BUILD_DIR)/*
+	rm $(OS_OBJS)
