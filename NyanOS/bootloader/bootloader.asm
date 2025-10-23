@@ -20,7 +20,7 @@ boot:
     mov si, welcome_msg
     call Print
 
-    mov ax, 0x50
+    mov ax, 0x800
 
     ;; set the buffer at es:bx (0x50:0x0)
     mov es, ax  
@@ -37,7 +37,7 @@ boot:
     
     jc .disk_err    ; failed to read disk
 
-    jmp [0x500 + 0x18]   ; jump and execute the sector!
+    jmp 0x800:0x0   ; jump and execute the sector!
     
 .disk_err:
     mov bh, 0xf
