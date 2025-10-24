@@ -3,6 +3,5 @@
 void main() 
 {
     gdt_init();
-
     while (1) {};
 }

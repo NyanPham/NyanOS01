@@ -20,13 +20,13 @@ boot:
     mov si, welcome_msg
     call Print
 
-    mov ax, 0x800
+    mov ax, 0x100
 
     ;; set the buffer at es:bx (0x50:0x0)
     mov es, ax  
     xor bx, bx
     
-    mov al, 2   ; read 2 sectors
+    mov al, 18  ; read 18 sectors
     mov ch, 0   ; track 0
     mov cl, 2   ; sector to start reading (from the second sector)
     mov dh, 0   ; head number
@@ -37,7 +37,7 @@ boot:
     
     jc .disk_err    ; failed to read disk
 
-    jmp 0x800:0x0   ; jump and execute the sector!
+    jmp [0x1000 + 0x18]   ; jump and execute the sector!
     
 .disk_err:
     mov bh, 0xf
